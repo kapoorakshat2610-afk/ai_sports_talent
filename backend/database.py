@@ -4,19 +4,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
-# ============================================================
-# DATABASE CONFIGURATION
-# ============================================================
+# ------------------------------------------------------------
+# DATABASE URL
+# ------------------------------------------------------------
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Keep SQLite for LOCAL development only.
-# Render must have DATABASE_URL configured.
 if not DATABASE_URL:
+    # Local development fallback
     DATABASE_URL = "sqlite:///./sports_talent.db"
 
 
-# Render/PostgreSQL URL compatibility
+# ------------------------------------------------------------
+# DATABASE DRIVER FIX
+# ------------------------------------------------------------
+
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace(
         "postgres://",
@@ -32,14 +34,16 @@ elif DATABASE_URL.startswith("postgresql://"):
     )
 
 
-# ============================================================
+# ------------------------------------------------------------
 # ENGINE
-# ============================================================
+# ------------------------------------------------------------
 
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
         DATABASE_URL,
-        connect_args={"check_same_thread": False},
+        connect_args={
+            "check_same_thread": False,
+        },
     )
 else:
     engine = create_engine(
@@ -48,9 +52,9 @@ else:
     )
 
 
-# ============================================================
+# ------------------------------------------------------------
 # SESSION
-# ============================================================
+# ------------------------------------------------------------
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -59,21 +63,22 @@ SessionLocal = sessionmaker(
 )
 
 
-# ============================================================
+# ------------------------------------------------------------
 # BASE
-# ============================================================
+# ------------------------------------------------------------
 
 Base = declarative_base()
 
 
-# ============================================================
+# ------------------------------------------------------------
 # DATABASE DEPENDENCY
-# ============================================================
+# ------------------------------------------------------------
 
 def get_db():
     db = SessionLocal()
 
     try:
         yield db
+
     finally:
         db.close()
