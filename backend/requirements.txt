@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pandas
+scikit-learn==1.6.1
+joblib
+opencv-python-headless
+mediapipe==0.10.32
+protobuf<5
+numpy<2
+sqlalchemy
+pyjwt
+pwdlib[argon2]
+psycopg[binary]
