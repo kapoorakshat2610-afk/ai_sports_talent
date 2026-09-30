@@ -10,24 +10,14 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-
-# On Render, DATABASE_URL MUST exist.
-# We do not want Render silently falling back to SQLite.
 if not DATABASE_URL:
-    if os.getenv("RENDER"):
-        raise RuntimeError(
-            "DATABASE_URL is not set on Render. "
-            "Connect this service to the Render PostgreSQL database."
-        )
-
-    # Local development fallback
-    DATABASE_URL = "sqlite:///./sports_talent.db"
+    raise RuntimeError(
+        "DATABASE_URL is not set. "
+        "Configure DATABASE_URL in the Render environment."
+    )
 
 
-# ============================================================
-# NORMALIZE POSTGRES URL
-# ============================================================
-
+# Render/PostgreSQL URL compatibility
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace(
         "postgres://",
@@ -44,7 +34,7 @@ elif DATABASE_URL.startswith("postgresql://"):
 
 
 # ============================================================
-# CREATE ENGINE
+# ENGINE
 # ============================================================
 
 if DATABASE_URL.startswith("sqlite"):
